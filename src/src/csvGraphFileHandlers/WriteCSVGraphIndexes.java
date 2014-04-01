@@ -173,4 +173,9 @@ public class WriteCSVGraphIndexes {
 	public void setDegree(boolean dg){
 		this.degree=dg;
 	}
+	
+	public String getTargetFile() {
+		
+		return targetFile;
+	}
 }

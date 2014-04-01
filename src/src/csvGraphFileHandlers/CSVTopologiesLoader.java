@@ -49,7 +49,7 @@ public class CSVTopologiesLoader{
 	
 	private void fillGraphsList(){
 		int i;
-		for(i=0;i<nTopologies;i++){
+		for(i = 0 ; i < nTopologies;i++){
 			graphs.add(createGraph(topologyFile.getTopologies().get(i), i));
 //			graphs.get(i).display(true); // PARA VISUALIZAR OS GRAFOS CRIADOS DESCOMENTE AQUI!!
 		}

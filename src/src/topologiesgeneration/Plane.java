@@ -129,7 +129,8 @@ public class Plane {
       		int auxMax = (hR - 1);
       		temp = temp + 1;
       		
-  			while(temp <= R) { 
+  			while(temp <= R) 
+  			{ 
   				//limites para as restantes regioes
   				region.addNode(0); 				//min i
   				region.addNode(X - 1); 			//max i
@@ -221,6 +222,7 @@ public class Plane {
 				/**
 				 * então o número de nós por região será igual, um nó por região
 				 */
+				int count = 0;
 				
 				if(S == 0)
 				{ 
@@ -242,13 +244,19 @@ public class Plane {
 							
 							while(allocated < N && auxR < R) {
 								
-								nNodesReg.update(auxR,1);
-								allocated = allocated +1;
-								auxR = auxR +1;
+								auxR = random(0,R-1);
+								
+								if(auxR < R)
+								{
+									nNodesReg.update(auxR,1);
+									allocated = allocated+1;
+								}
+								
 							}
 							if(allocated == N)
 							{
 								all = true;
+								break;
 							}
 						}
 					}
@@ -260,7 +268,7 @@ public class Plane {
 					 * a colocacao dos nós sera aleatória
 					 * inicialmente o número de nós por região será 0 (zero)
 					 */
-					int j = 0,count;
+					int j = 0;
 					
 					while(j < R) {
 						
@@ -287,14 +295,20 @@ public class Plane {
 								{
 									//falta um nó somente
 									nNodesReg.update(auxR,1);
-									missing-=1;
+									missing = missing-1;
+									break;
 								}
 								else
 								{
 									
-									randInt = random(0, missing);
+									randInt = random(0,missing);
 									nNodesReg.update(auxR,randInt);
 									missing = missing - randInt;
+									
+									if(missing == 0)
+									{	
+										break;
+									}
 									
 								}
 								if(missing == 0)
@@ -313,16 +327,16 @@ public class Plane {
 								if(auxN == 1)
 								{
 									//só falta colocar 1 para atingir o máximo
-									if(nNodesReg.update(auxR,1)!= 0)
+									if(nNodesReg.update(auxR,1) != 0)
 									{
 										nNodesReg.update(auxR,1);
 									}
-									missing-=1;
+									missing = missing -1;
 								}
 								else
 								{
 									
-	                 				randInt = random(0, auxN); //pode ficar em ciclo aqui
+	                 				randInt = random(0,auxN); //pode ficar em ciclo aqui
 	                 				
 	                        		if( (missing - randInt) >= 0 )
 	                        		{
@@ -340,12 +354,13 @@ public class Plane {
 								{
 									break;
 								}
+								
 							}
 							if(missing == 0)
 							{
 								break;
 							}
-
+							count++;
 						}
 					}
 				}

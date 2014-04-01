@@ -1,4 +1,5 @@
 package front;
+import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -77,13 +78,17 @@ public class Main {
 		
 		Double i;
 		
-		MainWindow = new JFrame("Topologies Generator");
+		MainWindow = new JFrame("TOPOLOGIES GENERATION");
 		
 		//cria e organiza janelas 
-		JFrame frame = new JFrame("Topologies Generation");
+		JFrame frame = new JFrame("TOPOLOGIES GENERATION");
+		
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		MainWindow.setBounds(230,100, 630, 378);
+		MainWindow.setBounds(230,100, 625, 378);
+		MainWindow.setTitle("TOPOLOGIES GENERATION");
+		MainWindow.setBackground(new Color(234, 234, 234));
+		
 		MainWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	
 		/**
@@ -186,11 +191,11 @@ public class Main {
 		MainWindow.getContentPane().add(lblRegions);
 		
 		JLabel lblRBreadth = new JLabel("Breadth");
-		lblRBreadth.setBounds(400, 187, 70, 14);
+		lblRBreadth.setBounds(400, 185, 70, 14);
 		lblRBreadth.setToolTipText("Number of regions");
 		
 		BreadthTxtField = new JTextField();
-		BreadthTxtField.setBounds(400, 210, 70, 20);
+		BreadthTxtField.setBounds(400, 212, 70, 20);
 		BreadthTxtField.setColumns(10);
 		BreadthTxtField.setText("1");
 		
@@ -198,11 +203,11 @@ public class Main {
 		 * Comprimento da região 
 		 */
 		JLabel lblRLength = new JLabel("Length");
-		lblRLength.setBounds(500, 187, 70, 14);
+		lblRLength.setBounds(500, 185, 70, 14);
 		lblRLength.setToolTipText("Number of regions");
 		
 		LengthTxtField = new JTextField();
-		LengthTxtField.setBounds(500, 210, 70, 20);
+		LengthTxtField.setBounds(500, 212, 70, 20);
 		LengthTxtField.setColumns(10);
 		LengthTxtField.setText("20");
 		
@@ -234,7 +239,7 @@ public class Main {
 					if( R  > (N* N) || R < 2*N ) {
 						
 						lblStatus.setText("Check the value of R it must be : "+2*N + " ≤ R ≤" +N*N);
-						lblStatus.setBounds(35, 210, 334, 100);
+						lblStatus.setBounds(250, 250, 320, 80);
 						lblStatus.setToolTipText("Limit Region.");
 						return;
 					}
@@ -242,12 +247,13 @@ public class Main {
 					{
 						lblStatus.setText("");
 						lblStatus.setEnabled(false);
-						try {
+						try 
+						{
 							simulateGraph();
 						}
 						catch(Exception e) {
-							System.err.println(e);
-							e.printStackTrace();
+							lblStatus.setText("Couldn't generate topology!");
+							lblStatus.setBounds(250, 250, 320, 80);
 						}
 					}
 				
@@ -389,5 +395,6 @@ public class Main {
 		
 
 		lblStatus.setText("Simulation done!");
+		lblStatus.setBounds(250, 250, 320, 80);
 	}
 }

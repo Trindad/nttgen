@@ -43,6 +43,7 @@ public class WriteCSVTopology{
 		output = new PrintWriter(writer);
 		
 		output.println("Simulation Topology "+name);
+		output.println("___________________________");
 		output.close();
 		try {
 			writer.close();
@@ -63,14 +64,15 @@ public class WriteCSVTopology{
 		}
 		
 		output = new PrintWriter(writer);
-		for(i=0;i<graph.getNodeCount();i++){
+		
+		for(i = 0;i < graph.getNodeCount(); i++) {
 			line = "["+graph.getNode(i).getAttribute("x")+"]";
-			line += "\t";
-			line += "["+graph.getNode(i).getAttribute("y")+"]";
+			line += "\t\t";
+			line += "\t\t["+graph.getNode(i).getAttribute("y")+"]\t\t";
 			
 			output.println(line);
 		}		
-		output.println("----------------------------------------------------");
+		output.println("___________________________");
 		output.close();
 		try {
 			writer.close();
@@ -93,22 +95,23 @@ public class WriteCSVTopology{
 			e.printStackTrace();
 		}		
 		output = new PrintWriter(writer);
-		output.println("From\tTo\tLength");
-		for(i=0;i<graph.getEdgeCount();i++){
+		output.println("From \t  To \t\tLength");
+		output.println("___________________________");
+		for(i = 0;i < graph.getEdgeCount(); i++) {
+			
 			source = graph.getEdge(i).getSourceNode();
 			target = graph.getEdge(i).getTargetNode();
 			a = Math.pow(((Integer)source.getAttribute("x") - (Integer)target.getAttribute("x")), 2d);
 			b = Math.pow(((Integer)source.getAttribute("y") - (Integer)target.getAttribute("y")), 2d);
+			
 			line = ""+source;
-			line += "\t";
+			line += "\t | \t";
 			line += target;
-			line += "\t";
-
-//			line += Math.sqrt(a+b);
-//			output.println(line);
-			output.format("%s%.2f%n", line, Math.sqrt(a+b));
+			line += "\t | \t";
+			
+			output.format("  %s%.2f%n", line, Math.sqrt(a+b));
 		}
-		output.println("----------------------------------------------------");
+		output.println("___________________________");
 		output.close();
 		try {
 			writer.close();
@@ -116,6 +119,11 @@ public class WriteCSVTopology{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	public String getTargetFile() {
+		
+		return targetFile;
 	}
 }
 
