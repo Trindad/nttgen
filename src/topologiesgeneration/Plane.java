@@ -105,8 +105,7 @@ public class Plane {
 	
 		widthR = (int) Math.floor(X/height); 	//largura de cada regiao 
 		heightR = (int) Math.floor(X/width); 	//altura de cada regiao
-		// System.out.println(widthR);
-		// System.out.println(heightR);
+
 		
 		limit(heightR, widthR, R, height);  			//determina os limites das regioes
 		setNodeReg(heightR, widthR, R, Y, S, N); 	//determina o número de nós por região
@@ -404,7 +403,7 @@ public class Plane {
 				
 		for(int c = 0; c < R ; c++){  
 			
-				plan[c] = new DoublyLinkedList(); //inicializa as listas 
+			plan[c] = new DoublyLinkedList(); //inicializa as listas 
 		} 
 
 		for(int auxR = 0; auxR < R; auxR++) {//para todas as regioes
@@ -420,8 +419,7 @@ public class Plane {
 
 			if(nNodesReg.retElement(auxR) > 0)
 			{
-				// System.out.println("Verifica se tem nós a serem inseridos"+R);
-
+				
 				//se tiver algum nó pra inserir na regiao
 				if(toBlock.empty() != 1)
 				{ 
@@ -454,7 +452,7 @@ public class Plane {
 						
 					u1 = plan[auxR].retElementOne(rand);//determina posicao i do no a colocar
 					u2 = plan[auxR].retElementTwo(rand);//determina posicao j do no a colocar	
-					// System.out.println("["+u1+"] "+"["+u2+"]");
+					
 					setNode(u1,u2,Y);	//coloca o nodo
 						
 					for(int temp = u1-Y; temp <= u1+Y; temp++){
@@ -737,14 +735,12 @@ public class Plane {
 	 */
 	public int adjacencia(int destino, int origem) throws Exception{
 		
-		
 		/*
 		 * Obtem o valor das coordenadas dos nodos
 		 */
 		int xOrigem = nPos.retElementOne(origem);
 
 		int yOrigem = nPos.retElementTwo(origem);
-		// System.out.println("origem = "+xOrigem+" destino"+yOrigem +" "+origem+" "+destino);
 		
 		int xDestino = nPos.retElementOne(destino);
 		int yDestino = nPos.retElementTwo(destino);
@@ -990,7 +986,7 @@ public class Plane {
 								{
 									int temp = nearestNode(src,0, N-1,rede);//pega o destino mais proximo
 									
-									if(temp < N && rede.getDegree(temp) < this.maxDegree)
+									if(temp < N && rede.getDegree(temp) <= this.minDegree)
 									{
 										destino  = temp;
 										break;
