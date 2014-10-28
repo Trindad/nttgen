@@ -1,6 +1,6 @@
 package topologiesgeneration;
 import java.util.Random;
-
+import java.lang.Math;
 /**
  *Funções para o Plano.
  */
@@ -109,7 +109,7 @@ public class Plane {
 		
 		limit(heightR, widthR, R, height);  			//determina os limites das regioes
 		setNodeReg(heightR, widthR, R, Y, S, N); 	//determina o número de nós por região
-		
+
 		sortNpos(R, Y); //auxiliar para sortear nós
 	} 		
 	
@@ -407,8 +407,7 @@ public class Plane {
 		} 
 
 		for(int auxR = 0; auxR < R; auxR++) {//para todas as regioes
-			toBlock = new DoublyLinkedList();
-
+		
 			for(int k = region.retElement(p+2); k <= region.retElement(p+3); k++) { //linhas
 				
 				for(int j = region.retElement(p);j <= region.retElement(p+1); j++){ //colunas
@@ -430,6 +429,7 @@ public class Plane {
 					x = 0;
 					
 					for(int i = 0;i <= blockSize; i++) {
+						
 						a = toBlock.retElementOne(x);						
 						b = toBlock.retElementTwo(x);
 						
@@ -445,9 +445,11 @@ public class Plane {
 						}					
 					}
 				}		
+				
 				for(int auxNno = 0; auxNno < nNodesReg.retElement(auxR); auxNno++) {//para o numero de nos de cada regiao
 					
 					listSize = (plan[auxR].size())-1;
+					
 					rand = random(0,listSize);//sorteia uma
 						
 					u1 = plan[auxR].retElementOne(rand);//determina posicao i do no a colocar
@@ -518,7 +520,7 @@ public class Plane {
 	/**
 	 *Calcula a distancia Euclidiana entre dois pares de vértices/nós.
 	 */
-	public int getEuclidianDistance(int u1, int u2, int v1, int v2){
+	public int getEuclidianDistance(int u1, int u2, int v1, int v2) throws Exception{
 		
 		int d = (int)Math.sqrt((u1-v1)*(u1-v1) + (u2 - v2)*(u2 - v2));
 		return d;
@@ -529,6 +531,10 @@ public class Plane {
 	 */
 	public int waxman(graph rede, int i, int j, int d, double alfa, double beta, double L, int mSpath) throws Exception{
 	
+		if(i >= rede.getNumberNodes() || j >= rede.getNumberNodes() )
+		{
+			return 1;
+		}
 		double probWax = (alfa*(double)Math.exp(-d/(L*beta))); // alpha*exp(-d/(beta*L));
 
 		double temp = randomD(0,1)*0.75f;
@@ -555,102 +561,140 @@ public class Plane {
 				return 1;//nao colocou link
 			}
 		}
-		else
-		{
-			return 1;//nao colocou pq origem = destino
-		}
+		
+		return 1;//nao colocou pq origem = destino
+		
 	} 
+
 	
 	/**
 	 *Set link/aresta
 	 */
-	public void setLink(graph rede, int L, double alfa, double beta, int mSpath) throws Exception{
-		
-		int auxSrc = 9999, auxDst = 9999;
+	public int setLink(graph rede, int L, double alfa, double beta, int mSpath) throws Exception{
+
+		int auxSrc = 0, auxDst = 0;
 		int u1 = 0, u2 = 0, v1 = 0, v2 = 0;
-		boolean segue = false;
-		int n = this.nNodes-1,i = 0,j=1,grauMinimo = 2;
+		int grauOrigem = -1,grauDestino = -1;
+		int N = rede.getNumberNodes();
+		int count = 0;
+		
+		
+		int [] ar = new int[N];
+		
+		int nMin = 0;
+		
+		for(int i = N-1; i >= 0 ;i--)
+		{
+			ar[i]  = i;
+			
+			if(rede.getDegree(i) >= this.minDegree)
+			{
+				nMin++;
+			}
+			
+			
+		}
+//		System.out.println("nMIn = "+nMin);
+		int indexSrc = -1,indexDst = -1;
 		
 		/**
-		 * Verifica se tem algum nó com grau inferior a 2
+		* shuffleArray
 		 */
-		while(i <= n) {
+		Random rnd = new Random();
+		
+	    for (int i = ar.length - 1; i > 0; i--)
+	    {
+		      int index = rnd.nextInt(i + 1);
+		      // Simple swap
+			  int a = ar[index];
+			  ar[index] = ar[i];
+			  ar[i] = a;
+		}
+		
+	    /**
+	     * Procura por origem com grau < que o grau mínimo
+	     */
+		for(int i = 0; i < N; i++) {
 			
-			auxSrc = random(0,n);//selecciona um nó de origem
-
-			if (rede.getDegree(auxSrc) < this.minDegree ) {
-				grauMinimo = 1;
+			if(rede.getDegree(ar[i]) < this.minDegree) 
+			{
+				grauOrigem = rede.getDegree(ar[i]);
+				auxSrc = ar[i];
+				indexSrc = i;
 				break;
 			}
-			i++;
 		}
-
-		if (auxSrc == 9999) 
+		/**
+		 * Procura por destino < que o grau mínimo
+		 */
+		for(int i = 0 ;i < N; i++) {
+			
+			if(rede.getDegree(ar[i]) < this.minDegree && i != indexSrc) 
+			{
+				grauDestino = rede.getDegree(ar[i]);
+				auxDst = ar[i];
+				indexDst = i;
+				break;
+			}
+		}
+	
+		if(grauOrigem  == -1 )
 		{
-			while(true) {
-
-				auxSrc = random(0,n);//seleciona um destino aleatório
-
-				if ( rede.getDegree(auxSrc) < this.maxDegree) 
+			count = 0;
+			while(count < N ) 
+			{
+				//enquanto a origem n for diferente do destino
+				auxSrc = ar[count];
+				
+				if(rede.getDegree(auxSrc) < N-1 && auxDst !=  auxSrc)
 				{
-					break;	
+					grauOrigem = rede.getDegree(auxSrc);
+					indexSrc = count;
+					break;
 				}
+				count++;
+//				System.out.println("looop1");
 			}
 		}
 		
-		while(segue == false) {//enquanto a origem n for diferente do destino
-			i = 0;
-			j = 1;
+		
+		if(grauDestino == -1)
+		{
+			count = 0;
 			
-			/**
-			 * Para cada nó u verifica se v tem a menor distância comparado ao anterior, do contrário continua
-			 */
-			while( i <= n) {
+			while(count < N) 
+			{
+				//enquanto a origem n for diferente do destino
+				auxDst = ar[count];//selecciona um destino
 				
-				auxDst =  random(0,n);//selecciona um nó de origem
-
-				if (rede.getDegree(auxDst) < j && rede.getArc(auxSrc,auxDst) == 1 && (rede.getDegree(auxDst) < this.minDegree )) 
+				if(rede.getDegree(auxDst) < N-1 && rede.getArc(auxSrc, auxDst) == 1 &&  auxSrc != auxDst && indexDst != indexSrc)
 				{
-					grauMinimo = 1;
+					grauDestino = rede.getDegree(auxDst);
 					break;
 				}
-				i++;j++;
-			}
-
-			if (auxDst == 9999) 
-			{
-				while(true) {
-
-					auxDst = random(0,n);//seleciona um destino aleatório
-
-					if ( rede.getDegree(auxDst) < this.maxDegree) 
-					{
-						break;	
-					}
-				}
-			}
-			
-			
-			if(auxSrc != auxDst )
-			{
-				u1 = nPos.retElementOne(auxSrc);//coordenada i da origem
-				
-				u2 = nPos.retElementTwo(auxSrc);//coordenada j da origem
-				v1 = nPos.retElementOne(auxDst);//coordenada i do destino
-				
-				v2 = nPos.retElementTwo(auxDst);//coordenada j do destino
-
-				
-				segue = true;
-				
-			}
+				count++;
+//				System.out.println("looop1");
+			}	
 		}
-
-
+//		System.out.println("origem "+auxSrc+"\t"+grauOrigem+" destino"+auxDst+"\t"+grauDestino);
+		if(auxSrc != auxDst)
+		{
+			u1 = nPos.retElementOne(auxSrc);//coordenada i da origem
+			u2 = nPos.retElementTwo(auxSrc);//coordenada j da origem
+			v1 = nPos.retElementOne(auxDst);//coordenada i do destino
+			v2 = nPos.retElementTwo(auxDst);//coordenada j do destino
+		}
+		else
+		{
+			return nMin;
+		}
+		
+		
 		int dist = getEuclidianDistance(u1, u2, v1, v2);
-
-		if (grauMinimo == 1) {
-
+		
+		
+		if( (grauOrigem < this.minDegree || grauDestino < this.minDegree) && rede.getArc(auxSrc, auxDst) == 1) {
+			
 			if(mSpath == 0)
 			{ 
 				//entao h medio será em distancia	
@@ -661,20 +705,17 @@ public class Plane {
 				//entao h medio será em hops
 				rede.setArc(auxSrc,auxDst,1);
 			}
-			return;
 		}
-		else
+		
+		if(rede.getArc(auxSrc, auxDst) == 1)
 		{
 			waxman(rede,auxSrc,auxDst,dist,alfa,beta,L,mSpath);
-			return;
-			
 		}
 		
-		
+		return nMin;
 	}
 	
 	public int buscaVerticeMaisProximo(int origem, int minimo, int maximo, graph rede)throws Exception {
-		
 		/*
 		 * Obtem o valor das coordenadas dos nodos
 		 */
@@ -706,7 +747,7 @@ public class Plane {
 						*/
 						if(xDestino == x && y == yDestino)
 						{
-							if(raioAtual < raioAnterior && rede.getArc(origem,destino) == 1 && (rede.getDegree(origem) <= this.minDegree && rede.getDegree(destino) <= this.minDegree ))
+							if(raioAtual < raioAnterior && rede.getArc(origem,destino) == 1 && (rede.getDegree(origem) < rede.getNumberNodes()-1 && rede.getDegree(destino) < rede.getNumberNodes()-1 ))
 							{
 								
 								/**
@@ -761,7 +802,7 @@ public class Plane {
 	 * retorna um vetor com as coordenadas x,y do nó
 	 */
 	public int nearestNode(int origem, int minimo, int maximo, graph rede) throws Exception {
-		
+	
 		/*
 		 * Testa possibilidades de nós adjacentes  
 		*/
@@ -776,7 +817,7 @@ public class Plane {
 				/**
 				 * Verifica se já não existe ligação
 				 */
-				if (rede.getArc(origem,temp) == 1 && rede.getDegree(origem) <= this.minDegree || rede.getDegree(temp) <= this.minDegree ) 
+				if (rede.getArc(origem,temp) == 1 && rede.getDegree(origem) < rede.getNumberNodes() || rede.getDegree(temp) < rede.getNumberNodes() ) 
 				{
 					break;
 				}
@@ -786,7 +827,7 @@ public class Plane {
 			 * Verifica se destino temporário é adjacente/vizinho ao nó origem
 			 * o nó de adjacente a origem pode estar em oito posiveis coordenada.
 			 */
-			if(adjacencia(origem,destino) == destino && rede.getArc(origem,destino) == 1 &&  rede.getDegree(destino) < this.maxDegree) 
+			if(adjacencia(origem,destino) == destino && rede.getArc(origem,destino) == 1 &&  rede.getDegree(destino) < rede.getNumberNodes()-1) 
 			{
 				//System.out.println("Adjacencia");
 				return destino;
@@ -804,125 +845,114 @@ public class Plane {
 	 */
 	public void setRing(graph rede, int N, int R, int L, int mSpath) throws Exception{
 		
-		this.nNodes = N;
 		int u1, u2, v1, v2, auxSize;
 		int dist, p = 0;
-		int src, destino;
+		int src, dst;
 		
 		DoublyLinkedList labelNo = new DoublyLinkedList();
 		
-		//cria uma lista com o numero do no
-		for(int j = 0; j < N; j++) {
-			
+		//cria uma  lista com o numero do no
+		for(int j = 0; j < N; j++)
+		{
 			labelNo.addNode(j);
 		}
-		/*
-		 * for each region
-		*/
-
-		for(int auxR = 0; auxR < R; auxR++) {
-			
+		
+		for(int auxR = 0; auxR < R; auxR++){
+			//para cada regiao
 			DoublyLinkedList aux = new DoublyLinkedList();
+			
 			src = labelNo.retElement(0);
 			
-			destino = src;
+			dst = src;
 			
-			/*
-			 * Dificilmente entra nesse só se ocorrer a nova modificação onde pode ter a distribuição dos nós randomicamente
-			*/
-			
-			if((int)nNodesReg.retElement(auxR) > 0)
-			{
+			if((int)nNodesReg.retElement(auxR) > 0){
 				
-				if((int)nNodesReg.retElement(auxR) > 1)
-				{
-					/*
-					 * se houver mais q um no/vertice em uma região
-					 */
+				if((int)nNodesReg.retElement(auxR) > 1){//se houver mais q um no
 					
-					for(int k = 0; k < (int)nNodesReg.retElement(auxR); k++) {//para cada no da regiao
+					
+					for(int k = 0; k < (int)nNodesReg.retElement(auxR);k++){//para cada no da regiao
 						
 						aux.addNode(src);//lista auxiliar que contém os nós com ligações já feitas
+						
 						int min = aux.retElement(0);
 						int max = (aux.retElement(0)+nNodesReg.retElement(auxR))-1;
 						
-					
+						if(max >= rede.getNumberNodes()) max = rede.getNumberNodes()-1;
+						if(min == max) min = min-1;
+				
 						if(k == nNodesReg.retElement(auxR)-1)
-						{
-							/*
-							 * se for a última ligação
-							*/
-							destino =  aux.retElement(0);
+						{//se for a última ligação
+							
+							dst = aux.retElement(0);//a ligação é feita com o nó inicial
 						}
 						else
-						{							
-							while(destino == src || p == 1){//o destino deve ser diferente da origem
-
-								while(true) {
-
-									destino = nearestNode(src,min,max,rede);//obtêm nó mais próximo
-
-									if (destino < N && destino != src && rede.getArc(src,destino) == 1 && (rede.getDegree(src) <= this.minDegree || rede.getDegree(destino) <= this.minDegree))
+						{
+							
+							while(dst == src || p == 1){//o destino deve ser diferente da origem
+								
+								dst = random(min,max);//sortea destino
+//								System.out.println("MIN "+min+" MAX "+max);
+//								System.out.println("SRC "+src+" DST "+dst);
+								
+								if(dst == src) continue;
+								
+									
+								int tam = aux.size();
+								
+								for(int x = 0; x < tam; x++){
+									
+									/**
+									 * verifica se o nó sorteado já tem uma ligação ou é ele próprio
+									 */
+									if(dst == aux.retElement(x))
 									{
-
+										p = 1; 
 										break;
-									}
-								}
-
-								for(int x = 0;x < aux.size(); x++){
-									//verifica se o nó sorteado já tem uma ligação ou é ele próprio
-									if(destino == aux.retElement(x))
-									{
-										p = 1;break;
-										
 									}
 									else
 									{
 										p = 0;
 									}
+								
 								}
+								
 							}
 						}
 						
-						u1 = nPos.retElementOne(src);
-						u2 = nPos.retElementTwo(src);
-						v1 = nPos.retElementOne(destino);
-						v2 = nPos.retElementTwo(destino);
-						
-						dist = getEuclidianDistance(u1, u2, v1, v2);
+						do
+						{
 							
-						if (mSpath == 0) 
-						{
-							rede.setArc(src,destino,dist);
+							u1 = nPos.retElementOne(src);
+							u2 = nPos.retElementTwo(src);
+							v1 = nPos.retElementOne(dst);
+							v2 = nPos.retElementTwo(dst);
+							
+							dist = getEuclidianDistance(u1, u2, v1, v2);
+							
 						}
-						else
-						{
-							rede.setArc(src,destino,1);
-						}
-												
+						while(waxman(rede,src,dst,dist,1,1,L,mSpath) != 0);//enquanto n inserir um link
+								
 						labelNo.removeNode(src);
-						
-						src = destino;//src recebe a nova origem
+						src = dst;//src recebe a nova origem
 						
 						if(nNodesReg.retElement(auxR) == 2)
-						{
-							//se houver só dois nós, a ligação será feita uma vez
-							
+						{//se houver só dois nós, a ligação será feita uma vez
 							labelNo.removeNode(src);
 							k++;
 						}
 					}
 				}
+				
 			}
-
+		
 			auxSize = aux.size();
 			
+			/**
+			 * remove os elementos em aux
+			 */
 			if(aux.empty() != 1)
 			{
-				//remove os elementos em aux
-				
-				for(int j = 0; j < auxSize; j++){
-					
+				for(int j = 0;j < auxSize;j++){
 					int x = 0;		
 					int a = aux.retElement(x);
 					aux.removeNode(a);
@@ -934,7 +964,8 @@ public class Plane {
 	/*
 	 *Interliga os anéis em cada região.
 	*/	
-	public void setRingReg(graph rede, int N, int L, int mSpath) throws Exception{
+	public void setRingReg(graph rede, int N, int L, int mSpath,int maxLinks) throws Exception{
+		
 		
 		int R = (int)nNodesReg.size();
 		
@@ -942,12 +973,21 @@ public class Plane {
 	
 		int u1, u2, v1, v2 , v11 , v22 , dist, dist1, destino = 0, dst1, src1, srcAux = 0, dstAux = 0;
 
+		if(rede.getNumLinks() == maxLinks)
+		{
+			return;
+		}
 		/*
 		 * Número de regiões maior que 1 
 		 */
 		if(R > 1)
 		{
 			for(int i = 0; i < R; i++) {
+				
+				if(rede.getNumLinks() == maxLinks)
+				{
+					return;
+				}
 				/*
 				*se for primeira regiao, a regiao comeca nPos[0]
 				*/
@@ -968,9 +1008,9 @@ public class Plane {
 					if(nNodesReg.retElement(i) == 1)
 					{ 
 						
-						src = auxS;
+						src = random(0,rede.getNumberNodes()-1);
 
-						if (rede.getDegree(src) <= this.minDegree) {
+						if (rede.getDegree(src) < rede.getNumberNodes()-1) {
 							
 							/*
 							 * Coordenadas x,y 
@@ -982,18 +1022,20 @@ public class Plane {
 							//encontrar o destino
 							do
 							{
+								
 								while(true)
 								{
 									int temp = nearestNode(src,0, N-1,rede);//pega o destino mais proximo
 									
-									if(temp < N && rede.getDegree(temp) <= this.minDegree)
+									if(temp < N && rede.getDegree(temp) < rede.getNumberNodes()-1)
 									{
 										destino  = temp;
 										break;
 									}
+//									System.out.println("Aqui loop");
 								} 	
 							}
-							while(destino == src);
+							while(destino == src );
 							
 							v1   = nPos.retElementOne(destino);
 							v2   = nPos.retElementTwo(destino);
@@ -1009,20 +1051,12 @@ public class Plane {
 								rede.setArc(src,destino,1);
 							}
 
-							if (rede.getDegree(src) <= this.minDegree) {
+							if (rede.getDegree(src) < rede.getNumberNodes()-1) {
 								do
 								{
-									while(true)
-									{
-										int temp = nearestNode(src,0, N-1,rede);//sortear destino
-										
-										if(temp < N && rede.getDegree(temp) < this.maxDegree)
-										{
-											dst1 = temp;
-											break;
-										}
-									}
 									
+									dst1 = nearestNode(src,0, N-1,rede);//sortear destino
+//									System.out.println("Aqui loop 1");
 								}
 								while(dst1 == destino || dst1 == src);
 									
@@ -1041,34 +1075,34 @@ public class Plane {
 							}
 							
 						}
+						else
+						{
+							continue;
+						}
 					}
 				
 					else if(nNodesReg.retElement(i) == 2)
 					{ 
-						
+//						System.out.println("RING 2");
 						/*
 						 * existe 2 nós na regiao, ligados em barra
 						*/
-						src = auxS;
+						src = random(0,rede.getNumberNodes()-1);
 
-						if (rede.getDegree(src) <= this.minDegree) {
+						if (rede.getDegree(src) < rede.getNumberNodes()-1) {
 							
-						
 						
 							u1 = nPos.retElementOne(src); //origem x
 							u2 = nPos.retElementTwo(src);//origem y
 							do
 							{
-								while(true)
+								if(rede.getNumLinks() == maxLinks)
 								{
-									int temp  = nearestNode(src,0, N-1,rede);
-									
-									if(temp < N && rede.getDegree(temp) < this.maxDegree)
-									{
-										destino = temp;
-										break;
-									}
+									return;
 								}
+								
+								destino  = nearestNode(src,0, N-1,rede);
+									
 							}
 							while(destino == src || destino == src+1);
 							
@@ -1086,9 +1120,9 @@ public class Plane {
 								rede.setArc(src,destino,1);
 							}
 						}	
-						src = src+1;
+	
 
-						if (rede.getDegree(src) <= this.minDegree) {
+						if (rede.getDegree(src) < rede.getNumberNodes()-1) {
 					
 							if (src >= N)
 							{
@@ -1101,12 +1135,15 @@ public class Plane {
 								
 							do
 							{
-								while(true)
+								if(rede.getNumLinks() == maxLinks)
 								{
-									dst1 = nearestNode(src,0, N-1,rede);//encontra destino mais próximo
-
-									if(src < N && dst1 < N  && dst1 != src && rede.getDegree(dst1) < this.maxDegree) break;
+									return;
 								}
+								dst1 = nearestNode(src,0, N-1,rede);//encontra destino mais próximo
+								
+								if(src < N && dst1 < N  && dst1 != src && rede.getDegree(dst1) < rede.getNumberNodes()-1) break;
+//								System.out.println("Aqui loop 3");
+								
 							}
 							while(dst1 == src || dst1 == src-1);
 							
@@ -1150,14 +1187,19 @@ public class Plane {
 								vDst.addTwo(nPos.retElementOne(j),nPos.retElementTwo(j));
 							}
 						}
-					
+						
 						int srcSize= vSrc.size();
 						int dstSize = vDst.size();
 
 						while(true) {
+							
+							if(rede.getNumLinks() == maxLinks)
+							{
+								return;
+							}
 							src = random(0,srcSize-1);	
 
-							if (rede.getDegree(src) <= this.minDegree) {
+							if (rede.getDegree(src) < this.maxDegree) {
 								break;
 							}
 						}
@@ -1167,11 +1209,14 @@ public class Plane {
 						
 
 						while(true) {
-							
+							if(rede.getNumLinks() == maxLinks)
+							{
+								return;
+							}
 							destino = nearestNode(src,0,dstSize-1,rede); //sortear destino;
 							
 							if(src < N && destino < N  && destino != src && rede.getDegree(destino) < this.maxDegree) break;
-							
+//							System.out.println("Aqui loop 4");
 						}
 						
 						v1   = vDst.retElementOne(destino);
@@ -1180,6 +1225,10 @@ public class Plane {
 						
 						for(int n = 0; n  < nPos.size(); n++) {
 							
+							if(rede.getNumLinks() == maxLinks)
+							{
+								return;
+							}
 							if(nPos.retElementOne(n) == u1 && nPos.retElementTwo(n) == u2 && n < N)
 							{									
 								srcAux = n;
@@ -1188,6 +1237,10 @@ public class Plane {
 						}
 
 						for(int n = 0;  n < nPos.size(); n++) {
+							if(rede.getNumLinks() == maxLinks)
+							{
+								return;
+							}
 							
 							if(nPos.retElementOne(n) == v1 && nPos.retElementTwo(n) == v2 && n < N )
 							{
@@ -1211,11 +1264,16 @@ public class Plane {
 							while(true)
 							{
 								while(true) {
+									if(rede.getNumLinks() == maxLinks)
+									{
+										return;
+									}
 									src1  = random(0, srcSize-1);	
 
-									if (rede.getDegree(src1) <= this.minDegree) {
+									if (rede.getDegree(src1) < this.maxDegree) {
 										break;
 									}
+//									System.out.println("Aqui loop 6");
 								}
 								
 								dst1  = nearestNode(src1,0, dstSize-1,rede);//sortear destino
@@ -1284,6 +1342,6 @@ public class Plane {
 					}
 				}
 			}
-		}	
+		}
 	}
 }

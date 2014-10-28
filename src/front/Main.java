@@ -100,7 +100,7 @@ public class Main {
 		
 		NodesTxtField = new JTextField();
 		NodesTxtField.setBounds(35, 57, 70, 20);
-		NodesTxtField.setText("10");
+		NodesTxtField.setText("5");
 		NodesTxtField.setColumns(10);
 		
 		/**
@@ -179,7 +179,7 @@ public class Main {
 		XTxtField = new JTextField();
 		XTxtField.setBounds(35, 109, 70, 20);
 		XTxtField.setColumns(10);
-		XTxtField.setText("20");
+		XTxtField.setText("10");
 		
 		/**
 		 * R : número de regiões da matriz.
@@ -209,7 +209,7 @@ public class Main {
 		LengthTxtField = new JTextField();
 		LengthTxtField.setBounds(500, 212, 70, 20);
 		LengthTxtField.setColumns(10);
-		LengthTxtField.setText("20");
+		LengthTxtField.setText("10");
 		
 		/**
 		 * Numero de simulações.
@@ -252,6 +252,7 @@ public class Main {
 							simulateGraph();
 						}
 						catch(Exception e) {
+							e.printStackTrace();
 							lblStatus.setText("Couldn't generate topology!");
 							lblStatus.setBounds(250, 250, 320, 80);
 						}

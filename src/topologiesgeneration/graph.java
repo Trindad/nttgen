@@ -8,6 +8,7 @@ class cArc { //classe Arco
 public class graph {
 
 	int nodes; 											//guarda numero de nodos/arestas.
+	int nLinks; //armazena o número de ligações do grafo
 	DoublyLinkedList links = new DoublyLinkedList(); 	//guarda os links no formato i,j,i,j,...
 	cArc[][] arcs = new cArc[nodes][nodes]; 			//cria a matriz de arestas (adjacencia).
 	DoublyLinkedList transp = new DoublyLinkedList(); 	//lista dos transponders
@@ -29,6 +30,7 @@ public class graph {
 		for(int i = 0; i < n; i++){
 
 			degree[i] = 0;
+			
 			for(int j = 0;j < n; j++) {
 				
 				arcs[i][j] = new cArc();
@@ -36,6 +38,7 @@ public class graph {
 				arcs[i][j].weight = 9999;
 			}
 		}
+		this.nLinks = 0;
 	}
 
 	/**
@@ -62,7 +65,13 @@ public class graph {
 		degree[src]= degree[src]+1;
 		degree[dst] = degree[dst]+1;
 		
+		this.nLinks++;
+		
 //		System.out.println(" origemDegree: "+degree[src]+" destinoDegree: "+degree[dst]+"\n");
+	}
+	
+	public int getNumberNodes() {
+		return this.nodes;
 	}
 
 	public int getArc(int src,int dst) throws Exception{
@@ -91,20 +100,35 @@ public class graph {
 	 */
 	public void printTopology() {
 		
-		// System.out.println("Network Topology [g]");
+		System.out.println("Network Topology [g]");
 		// System.out.println("------------------------------------");
 		
 		for(int i = 0; i < nodes; i++) {
 			
 			for(int j = 0; j < nodes; j++) {
 				
-				// System.out.print("["+arcs[i][j].adj+"]\t");
+				System.out.print(""+arcs[i][j].adj+"\t");
 			}
-			// System.out.println();
+			System.out.println();
 		}
 		// System.out.println("------------------------------------");
 	}
 
+	public void removeEdges(int nodes) {
+		
+		for(int i=0;i< this.nodes-1;i++) {
+			for(int j=i;j< this.nodes;j++){
+				this.arcs[i][j].adj = 0;
+				this.arcs[i][j].weight = 9999;
+				
+				this.arcs[j][i].adj = 0;
+				this.arcs[j][i].weight = 9999;
+			}
+			this.degree[i] = 0;
+		}
+		this.nLinks = 0;
+	}
+	
 	/**
 	 *Imprime a topologia, dado o n�mero de n�s. (matriz [g]).
 	 */
@@ -129,18 +153,9 @@ public class graph {
 	 *get para numero de links/arestas.
 	 */
 	public int getNumLinks()throws Exception {
+	
 		
-		int links = 0;
-		
-		for(int i = 0; i < nodes-1; i++) {
-			
-			for(int j = i+1; j < nodes; j++) {
-				
-				links += arcs[i][j].adj;
-			}
-		}
-		
-		return (links);
+		return this.nLinks;
 	}
 	
 

@@ -11,7 +11,7 @@ public class Measures {
 	/**
 	 *
 	 */
-	public void hops(DoublyLinkedList top, int N) throws Exception{
+	public void hops(DoublyLinkedList top, int N){
 		
 		Suurballe sub = new Suurballe();
 		DoublyLinkedList M1 = new DoublyLinkedList();
@@ -64,7 +64,7 @@ public class Measures {
 	/**
 	 * Calcula o valor h medio linha para uma topologia.
 	 */
-	public double[] callH(DoublyLinkedList top, int N, int op) throws Exception{
+	public double[] callH(DoublyLinkedList top, int N, int op){
 		
 		double hs [] = new double [2];
 		
@@ -78,7 +78,7 @@ public class Measures {
 	/**
 	 *Calculo do transponder.
 	 */
-	public int calcTransp(DoublyLinkedList transp, int h)throws Exception { //1 para h médio, outro valor para h'
+	public int calcTransp(DoublyLinkedList transp, int h) { //1 para h médio, outro valor para h'
 		
 		int som = 0, tSize = transp.size();
 		
@@ -103,7 +103,7 @@ public class Measures {
 	/**
 	 *Carrega os graus do grafo.
 	 */
-	public static void loadGraphDegrees(Graph graph)throws Exception {
+	public static void loadGraphDegrees(Graph graph){
 		
 		BetweennessCentrality bc = new BetweennessCentrality();
 		int dMin = graph.getNode(0).getDegree();

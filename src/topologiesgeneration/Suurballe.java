@@ -4,7 +4,7 @@ public class Suurballe {
 	/**
 	 *Algoritmo de Dijkstra, procura o menor caminho dado um grafo.
 	 */
-	public int[] dijkstra(DoublyLinkedList top, int s, int d, int N, int aux) throws Exception{
+	public int[] dijkstra(DoublyLinkedList top, int s, int d, int N, int aux){
 		
 		int []S = new int[N];
 		int []p = new int[N];
@@ -105,7 +105,7 @@ public class Suurballe {
 	/**
 	 * Faz a transformação dos pesos dos nós para ser escolhido um segundo caminho diferente pelo Dijkstra	.
 	 */
-	public void transCost(DoublyLinkedList M1, int []c, DoublyLinkedList top, int d, int N) throws Exception{
+	public void transCost(DoublyLinkedList M1, int []c, DoublyLinkedList top, int d, int N) {
 		
 		int M1S = M1.size(), topS = top.size();
 		int []status = new int[topS];
@@ -153,7 +153,7 @@ public class Suurballe {
 	/**
 	 *  Retorna o caminho sugerido pelo Dijkstra.	
 	 */
-	public DoublyLinkedList pathM(int s,int d, int []p, int N)throws Exception {
+	public DoublyLinkedList pathM(int s,int d, int []p, int N){
 		
 		DoublyLinkedList M = new DoublyLinkedList();
 		int x = 0;
@@ -189,7 +189,7 @@ public class Suurballe {
 	/**
 	 *  Verifica se existem dois caminhos disjuntos de um nó origem para o nó destino.
 	 */
-	public int pathDisj(DoublyLinkedList M1, DoublyLinkedList M2)throws Exception {
+	public int pathDisj(DoublyLinkedList M1, DoublyLinkedList M2){
 		
 		int k = M1.size(),l = M2.size(), igual = 0,j = 0;
 		DoublyLinkedList P1 = new DoublyLinkedList();
@@ -271,7 +271,7 @@ public class Suurballe {
 	/**
 	 * Sequência de métodos que faz o proposito do algoritmo de Suurballe.
 	 */
-	public int algSuurballe(DoublyLinkedList top, int s, int d, int N) throws Exception{
+	public int algSuurballe(DoublyLinkedList top, int s, int d, int N) {
 		
 		DoublyLinkedList M1 = new DoublyLinkedList();
 		DoublyLinkedList M2 = new DoublyLinkedList();
@@ -292,7 +292,7 @@ public class Suurballe {
 	/**
 	 * Verifica se existem dois caminhos para todos os nós.
 	 */	
-	public int twoPaths (DoublyLinkedList top, int N, DoublyLinkedList w)throws Exception {
+	public int twoPaths (DoublyLinkedList top, int N, DoublyLinkedList w){
 		
 		int a = 0;
 		for(int i = 0;i < N; i++){
@@ -317,7 +317,7 @@ public class Suurballe {
 	/**
 	 *  Inicializa a topologia com o peso inicial.
 	 */	
-	public DoublyLinkedList initCost(DoublyLinkedList top, DoublyLinkedList w, int N) throws Exception{
+	public DoublyLinkedList initCost(DoublyLinkedList top, DoublyLinkedList w, int N) {
 		
 		int topS = w.size();
 		
@@ -331,7 +331,7 @@ public class Suurballe {
 	/**
 	 *  Salva o peso inicial da topologia.
 	 */ 
-	public DoublyLinkedList saveW(DoublyLinkedList top) throws Exception {
+	public DoublyLinkedList saveW(DoublyLinkedList top){
 		
 		int topS = top.size();
 		DoublyLinkedList w = new DoublyLinkedList();
