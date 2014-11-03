@@ -49,11 +49,8 @@ public class graph {
 		
 		// System.out.println("1origem: "+src+"destino: "+dst+"w: "+w);
 		arcs[src][dst].adj = 1;
-		
-		// System.out.println("2origem: "+src+"destino: "+dst+"w: "+w);
+	
 		arcs[dst][src].adj = 1;
-		
-//		System.out.println("origem: "+src+"destino: "+dst+"w: "+w+"\n");
 		
 		
 		arcs[src][dst].weight = w;
@@ -66,8 +63,6 @@ public class graph {
 		degree[dst] = degree[dst]+1;
 		
 		this.nLinks++;
-		
-//		System.out.println(" origemDegree: "+degree[src]+" destinoDegree: "+degree[dst]+"\n");
 	}
 	
 	public int getNumberNodes() {
@@ -88,7 +83,15 @@ public class graph {
 	}
 
 	public int getDegree(int src) {
-		return this.degree[src];
+		
+		int degree = 0;
+		for(int i = 0; i < nodes;i++ ) {
+			if(arcs[src][i].adj >= 1) 
+			{
+				degree++;
+			}
+		}
+		return degree;
 	}
 
 	public void setDegree(int src) throws Exception{
@@ -153,9 +156,14 @@ public class graph {
 	 *get para numero de links/arestas.
 	 */
 	public int getNumLinks()throws Exception {
-	
 		
-		return this.nLinks;
+		int links=0;
+		for(int i=0; i<nodes; i++){
+			for(int j=0; j<nodes; j++){
+				links+= arcs[i][j].adj;
+			}
+		}
+		return links/2;
 	}
 	
 
