@@ -3,6 +3,8 @@ import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemListener;
+import java.awt.event.ItemEvent;
 import java.io.IOException;
 
 import javax.swing.JButton;
@@ -26,6 +28,7 @@ public class Main {
 	private JTextField YTxtField;
 	private JTextField XTxtField;
 	private JTextField BreadthTxtField;//R-Breadth
+	private JTextField nRegionsTxtField;
 	private JTextField SimsTxtField;
 	
 	private JComboBox<String> ScomboBox = new JComboBox<String>();
@@ -34,12 +37,14 @@ public class Main {
 	private JComboBox<Double> BethaComboBox = new JComboBox<Double>();
 	
 	private JCheckBox chckbxBetweennessCentrality;
+	private JCheckBox chckbxRegions;
 	private JCheckBox chckbxNodeDegree;
 	
 	private JButton btnSimulate = new JButton("Simulate");
 	
 	private JLabel lblStatus = new JLabel("");
 	
+	public int count = 0;
 	/**
 	 * Launch the application.
 	*/
@@ -100,7 +105,7 @@ public class Main {
 		
 		NodesTxtField = new JTextField();
 		NodesTxtField.setBounds(35, 57, 70, 20);
-		NodesTxtField.setText("5");
+		NodesTxtField.setText("20");
 		NodesTxtField.setColumns(10);
 		
 		/**
@@ -117,7 +122,7 @@ public class Main {
 		DmaxTxtField = new JTextField();
 		DmaxTxtField.setBounds(125, 57, 70, 20);
 		DmaxTxtField.setColumns(10);
-		DmaxTxtField.setText("4");
+		DmaxTxtField.setText("2");
 		
 		/**
 		 * Número mínimo de arestas do grafo
@@ -179,7 +184,7 @@ public class Main {
 		XTxtField = new JTextField();
 		XTxtField.setBounds(35, 109, 70, 20);
 		XTxtField.setColumns(10);
-		XTxtField.setText("10");
+		XTxtField.setText("40");
 		
 		/**
 		 * R : número de regiões da matriz.
@@ -189,6 +194,40 @@ public class Main {
 		JLabel lblRegions = new JLabel("Regions");
 		lblRegions.setBounds(380, 155, 80, 24);
 		MainWindow.getContentPane().add(lblRegions);
+
+		chckbxRegions = new JCheckBox("Enable flexible regions");
+		chckbxRegions.setBounds(396, 185, 300, 23);
+		MainWindow.getContentPane().add(chckbxRegions);
+		
+		chckbxRegions.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+				
+				if(e.getStateChange() == ItemEvent.SELECTED)
+				{
+					count = 1;
+					BreadthTxtField.setEnabled(true);
+					LengthTxtField.setEnabled(true);
+					BreadthTxtField.setText("4");
+					LengthTxtField.setText("10");
+					
+					nRegionsTxtField.setEnabled(false);
+					nRegionsTxtField.setText("0");
+					
+				} else 
+				{
+					nRegionsTxtField.setEnabled(true);
+					
+					BreadthTxtField.setEnabled(false);
+					LengthTxtField.setEnabled(false);
+					
+					BreadthTxtField.setText("0");
+					LengthTxtField.setText("0");
+					nRegionsTxtField.setText("1");
+				}
+				
+			}
+		});
 		
 		JLabel lblRBreadth = new JLabel("Breadth");
 		lblRBreadth.setBounds(400, 185, 70, 14);
@@ -197,8 +236,20 @@ public class Main {
 		BreadthTxtField = new JTextField();
 		BreadthTxtField.setBounds(400, 212, 70, 20);
 		BreadthTxtField.setColumns(10);
-		BreadthTxtField.setText("1");
+		BreadthTxtField.setText("4");
+		BreadthTxtField.setEnabled(false);
 		
+		if(count == 0)
+		{
+			BreadthTxtField.setText("0");
+			
+		}
+		else
+		{
+			BreadthTxtField.setText("4");
+		}
+		
+	
 		/**
 		 * Comprimento da região 
 		 */
@@ -210,6 +261,34 @@ public class Main {
 		LengthTxtField.setBounds(500, 212, 70, 20);
 		LengthTxtField.setColumns(10);
 		LengthTxtField.setText("10");
+		LengthTxtField.setEnabled(false);
+		
+		if(count == 0)
+		{
+			LengthTxtField.setText("0");
+			
+		}
+		else
+		{
+			LengthTxtField.setText("10");
+		}
+		/**
+		 * Número de regiões 
+		 */
+		JLabel lblnRegions = new JLabel("Number of regions");
+		lblnRegions.setBounds(400, 250, 150, 14);
+		lblnRegions.setToolTipText("Number of regions");
+		
+		nRegionsTxtField = new JTextField();
+		nRegionsTxtField.setBounds(400, 278, 70, 20);
+		nRegionsTxtField.setColumns(10);
+		nRegionsTxtField.setText("1");
+		nRegionsTxtField.setEnabled(true);
+		
+		if(count == 0)
+		{
+			nRegionsTxtField.setText("1");
+		}
 		
 		/**
 		 * Numero de simulações.
@@ -221,7 +300,7 @@ public class Main {
 		
 		SimsTxtField = new JTextField();
 		SimsTxtField.setBounds(125, 109, 70, 20);
-		SimsTxtField.setText("1");
+		SimsTxtField.setText("2");
 		SimsTxtField.setColumns(10);
 		btnSimulate.setBounds(35, 273, 170, 23);
 		
@@ -230,18 +309,35 @@ public class Main {
 			public void actionPerformed(ActionEvent arg0) {
 				//simulate
 				
-					int R =  Integer.parseInt( LengthTxtField.getText() ) *  Integer.parseInt( BreadthTxtField.getText() );
-					int N =  Integer.parseInt( NodesTxtField.getText() );
-					
-					/*
-					 * Verifica condições de limite para região antes de simular 
-					 */
-					if( R  > (N* N) || R < 2*N ) {
+					if(count == 1)
+					{
+						int R =  Integer.parseInt( LengthTxtField.getText() ) *  Integer.parseInt( BreadthTxtField.getText() );
+						int N =  Integer.parseInt( NodesTxtField.getText() );
 						
-						lblStatus.setText("Check the value of R it must be : "+2*N + " ≤ R ≤" +N*N);
-						lblStatus.setBounds(250, 250, 320, 80);
-						lblStatus.setToolTipText("Limit Region.");
-						return;
+						/*
+						 * Verifica condições de limite para região antes de simular 
+						 */
+						if( R  > (N* N) || R < 2*N ) {
+							
+							lblStatus.setText("Check the value of R it must be : "+2*N + " ≤ R ≤" +N*N);
+							lblStatus.setBounds(250, 280, 320, 80);
+							lblStatus.setToolTipText("Limit Region.");
+							return;
+						}
+						else
+						{
+							lblStatus.setText("");
+							lblStatus.setEnabled(false);
+							try 
+							{
+								simulateGraph();
+							}
+							catch(Exception e) {
+								e.printStackTrace();
+								lblStatus.setText("Couldn't generate topology!");
+								lblStatus.setBounds(250, 280, 320, 80);
+							}
+						}
 					}
 					else
 					{
@@ -254,9 +350,11 @@ public class Main {
 						catch(Exception e) {
 							e.printStackTrace();
 							lblStatus.setText("Couldn't generate topology!");
-							lblStatus.setBounds(250, 250, 320, 80);
+							lblStatus.setBounds(250, 280, 320, 80);
 						}
 					}
+					
+					
 				
 			}
 		});
@@ -278,6 +376,8 @@ public class Main {
 		MainWindow.getContentPane().add(BreadthTxtField);
 		MainWindow.getContentPane().add(lblRBreadth);
 		MainWindow.getContentPane().add(LengthTxtField);
+		MainWindow.getContentPane().add(nRegionsTxtField);
+		MainWindow.getContentPane().add(lblnRegions);
 		MainWindow.getContentPane().add(lblRLength);
 		MainWindow.getContentPane().add(lblNewLabel);
 		MainWindow.getContentPane().add(SimsTxtField);
@@ -356,8 +456,12 @@ public class Main {
 		graphGen.setDmin(Integer.parseInt(DminTxtField.getText()));
 		graphGen.setN(Integer.parseInt(NodesTxtField.getText()));
 		graphGen.setL(Integer.parseInt(LTxtField.getText()));
+		
+		
 		graphGen.setLength(Integer.parseInt(LengthTxtField.getText()));
 		graphGen.setBreadth(Integer.parseInt(BreadthTxtField.getText()));
+		graphGen.setNRegions(Integer.parseInt(nRegionsTxtField.getText()));
+		
 		graphGen.setY(Integer.parseInt(YTxtField.getText()));
 		graphGen.setX(Integer.parseInt(XTxtField.getText()));
 		
@@ -397,5 +501,7 @@ public class Main {
 
 		lblStatus.setText("Simulation done!");
 		lblStatus.setBounds(250, 250, 320, 80);
+		
+		count = 0;
 	}
 }

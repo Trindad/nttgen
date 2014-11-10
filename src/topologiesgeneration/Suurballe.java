@@ -241,19 +241,19 @@ public class Suurballe {
 			return 2;// NÃ£o hÃ¡ dois caminhos disjuntos
 		}
 		
-		if(P1.empty() != 1 && P2.empty() != 1)
-		{
-			for(int i = 0;i < k; i++) {
-				
-				for(j = 0;j < l; j++) {
-					
-					if(P1.retElementOne(i) == P2.retElementOne(j) && P1.retElementTwo(i) == P2.retElementTwo(j) || P1.retElementOne(i) == P2.retElementTwo(j) && P1.retElementTwo(i) == P2.retElementOne(j)){
-						return 2;// NÃ£o hÃ¡ dois caminhos disjuntos
-					}
-				}
-			}
-		}
-		
+//		if(P1.empty() != 1 && P2.empty() != 1)
+//		{
+//			for(int i = 0;i < k; i++) {
+//				
+//				for(j = 0;j < l; j++) {
+//					
+//					if(P1.retElementOne(i) == P2.retElementOne(j) && P1.retElementTwo(i) == P2.retElementTwo(j) || P1.retElementOne(i) == P2.retElementTwo(j) && P1.retElementTwo(i) == P2.retElementOne(j)){
+//						return 2;// NÃ£o hÃ¡ dois caminhos disjuntos
+//					}
+//				}
+//			}
+//		}
+//		
 		Mfim1=P1;
 		Mfim2=P2;
 		T1 = new DoublyLinkedList();

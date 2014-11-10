@@ -281,7 +281,7 @@ public class Measures {
 		bcMin = graph.getNode(0).getAttribute("Cb");
 		bcMax = graph.getNode(0).getAttribute("Cb");
 		
-		for(i = 1;i < graph.getNodeCount(); i++) {
+		for(i = 0;i < graph.getNodeCount(); i++) {
 			
 			tmp = graph.getNode(i).getDegree();
 			dMed += tmp;
@@ -307,8 +307,10 @@ public class Measures {
 				bcMax = tmp;
 			}
 		}
+		
 		dMed/=graph.getNodeCount();
 		bcMed/=graph.getNodeCount();
+		
 		graph.addAttribute("dMin", dMin);
 		graph.addAttribute("dMax", dMax);
 		graph.addAttribute("dMed", dMed);

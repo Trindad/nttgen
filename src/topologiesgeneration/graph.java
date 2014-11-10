@@ -45,31 +45,35 @@ public class graph {
 	 *Define um link (bidirecional), (origem, destino, peso).
 	 */
 
-	public void setArc(int src, int dst, int w) throws Exception{
+	public void setArc(int src, int dst, int w){
 		
 		// System.out.println("1origem: "+src+"destino: "+dst+"w: "+w);
-		arcs[src][dst].adj = 1;
-	
-		arcs[dst][src].adj = 1;
-		
-		
-		arcs[src][dst].weight = w;
-		arcs[dst][src].weight = w;
+		if(arcs[src][dst].adj == 0) 
+		{
+			arcs[src][dst].adj = 1;
+			
+			arcs[dst][src].adj = 1;
+			
+			
+			arcs[src][dst].weight = w;
+			arcs[dst][src].weight = w;
 
-		/**
-		 * Atualiza o grau dos nós
-		 */
-		degree[src]= degree[src]+1;
-		degree[dst] = degree[dst]+1;
+			/**
+			 * Atualiza o grau dos nós
+			 */
+			degree[src]= degree[src]+1;
+			degree[dst] = degree[dst]+1;
+			
+			this.nLinks++;
+		}
 		
-		this.nLinks++;
 	}
 	
 	public int getNumberNodes() {
 		return this.nodes;
 	}
 
-	public int getArc(int src,int dst) throws Exception{
+	public int getArc(int src,int dst){
 
 		/**
 		 * Testa se já tem ligação entre dois nós
@@ -85,13 +89,20 @@ public class graph {
 	public int getDegree(int src) {
 		
 		int degree = 0;
-		for(int i = 0; i < nodes;i++ ) {
-			if(arcs[src][i].adj >= 1) 
-			{
-				degree++;
+		
+		if(src < nodes) {
+			
+			for(int i = 0; i < nodes;i++ ) {
+				if(arcs[src][i].adj >= 1) 
+				{
+					degree++;
+				}
 			}
+			
+			return degree;
 		}
-		return degree;
+		
+		return nodes;
 	}
 
 	public void setDegree(int src) throws Exception{
