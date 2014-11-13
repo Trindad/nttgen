@@ -448,6 +448,7 @@ public class DoublyLinkedList {
 	public int retElementOne(int elem1) {
 
 		Node noTemp = first; 
+		
 		int i = 0;
 		
 		while(noTemp!= null) {   

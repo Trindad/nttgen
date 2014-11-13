@@ -289,6 +289,10 @@ public class Main {
 		{
 			nRegionsTxtField.setText("1");
 		}
+		else
+		{
+			nRegionsTxtField.setText("0");
+		}
 		
 		/**
 		 * Numero de simulações.
