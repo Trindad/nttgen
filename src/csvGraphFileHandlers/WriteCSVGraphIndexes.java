@@ -57,6 +57,7 @@ public class WriteCSVGraphIndexes {
 			line = graph.getAttribute("top")+";"+graph.getNodeCount()+";"+graph.getEdgeCount()+";";
 			line += formatador.format(graph.getAttribute("h"))+";"+formatador.format(graph.getAttribute("h'"))+";";
 			if(degree){
+				
 				line += graph.getAttribute("dMin")+";"+graph.getAttribute("dMax")+";"+formatador.format(graph.getAttribute("dMed"))+";";
 			}
 			if(bc){

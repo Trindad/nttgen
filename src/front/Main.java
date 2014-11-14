@@ -484,9 +484,17 @@ public class Main {
 		{
 			graphGen.setBc(true);
 		}
+		else
+		{
+			graphGen.setBc(false);
+		}
 		if(chckbxNodeDegree.isSelected())
 		{
 			graphGen.setDegree(true);
+		}
+		else
+		{
+			graphGen.setDegree(false);
 		}
 		
 		lblStatus.setEnabled(true);
