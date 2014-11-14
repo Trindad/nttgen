@@ -654,7 +654,7 @@ public class Plane {
 	
 		double probWax = (alfa*(double)Math.exp(-d/(L*beta))); // alpha*exp(-d/(beta*L));
 
-		double temp = randomD(0,1)*0.5f;
+		double temp = randomD(0,1)*0.50f;
 
 		if(i != j)
 		{
@@ -1045,7 +1045,6 @@ public class Plane {
 		int []origens = new int [N];
 		int []destinos = new int [N];
 		
-		DoublyLinkedList labelNo = new DoublyLinkedList();
 		
 		for(int j = 0; j < N; j++)
 		{
@@ -1092,7 +1091,6 @@ public class Plane {
 				 */
 				if(xi >= x_init && xi <= x_fim && yi >= y_init && yi <= y_fim) 
 				{
-//					System.out.println("no "+j+" na região "+r);
 					this.nodos[j] = r;
 					nodesReg[r] = nodesReg[r]+1;
 				}
@@ -1116,18 +1114,16 @@ public class Plane {
 				{
 					for(int k = 0; k < nodesReg[auxR];k++){//para cada no da regiao
 						
-						if( k == 0)
+						if( k == 0 || origens[src] == 1)
 						{
 							while(true)
 							{
 								
-								src = random(0,N-1);
+								src = random(0,this.nNodes-1);
 								
 								if(nodos[src] == auxR && rede.getDegree(src) < this.minDegree)
 								{
-									origens[src] = 1;
-									fim = src;
-									
+									fim = src;	
 									break;
 								}
 							}
@@ -1135,17 +1131,40 @@ public class Plane {
 						
 						dst = src;
 						
+						if(origens[src] == 1)
+						{
+							continue;
+						}
+						
 						while(true)
 						{
-							dst = random(0,N-1);
-//							System.out.println("dst "+dst);
-							if(dst == fim && n < nodesReg[auxR]-1) continue;
+							int link = 1;
 							
-							if(nodos[dst] == auxR && dst != src && rede.getDegree(dst) < this.minDegree && destinos[dst] == 0)
+							dst = random(0,this.nNodes-1);
+							
+							if(dst == fim && n < nodesReg[auxR]-1) 
 							{
-
-								int link = 0;
+								continue;
+							}
+							else if(dst == fim && n == nodesReg[auxR]-1)
+							{
+								u1 = nPos.retElementOne(src);
+								u2 = nPos.retElementTwo(src);
+								v1 = nPos.retElementOne(dst);
+								v2 = nPos.retElementTwo(dst);
+								dist = getEuclidianDistance(u1, u2, v1, v2);
+								
+								System.out.println("src "+src+" dst "+dst);
+								link(rede,src,dst,mSpath,dist);
+								
+								break;
+							}
+								
 							
+							if(nodos[dst] == auxR && dst != src && rede.getDegree(dst) < this.minDegree && destinos[dst] == 0 && rede.getDegree(src) < this.minDegree && origens[src] == 0 && rede.getArc(src, dst) == 1)
+							{
+//								System.out.println("src "+src+" dst "+dst);
+								
 								u1 = nPos.retElementOne(src);
 								u2 = nPos.retElementTwo(src);
 								v1 = nPos.retElementOne(dst);
@@ -1155,39 +1174,22 @@ public class Plane {
 								
 								link = waxman(rede,src,dst,dist,1,1,L,mSpath);//enquanto n inserir um link
 								
-								if(link == 0) 
-								{
-									System.out.println("src "+src+" dst "+dst);
-									destinos[dst] = 1;
-									n++;
-									break;
-								}
-								
+							}
+							
+							if(link == 0) 
+							{
+								System.out.println("src "+src+" dst "+dst);
+								destinos[dst] = 1;
+								n++;
+								break;
 							}
 						}
-						
-//						if(src != dst)
-//						{
-//							System.out.println("src "+src+" dst "+dst);
-//							u1 = nPos.retElementOne(src);
-//							u2 = nPos.retElementTwo(src);
-//							v1 = nPos.retElementOne(dst);
-//							v2 = nPos.retElementTwo(dst);
-//							
-//							dist = getEuclidianDistance(u1, u2, v1, v2);
-//							
-//							int link = waxman(rede,src,dst,dist,1,1,L,mSpath);//enquanto n inserir um link
-//							
-//							System.out.println(link);
-//						}
 						
 						if(origens[src] == 0) 
 						{
 							origens[src] = 1;
-							
 						}
-						
-						labelNo.removeNode(src);
+					
 						
 						src = dst;//src recebe a nova origem
 						
