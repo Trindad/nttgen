@@ -44,7 +44,7 @@ public class Main {
 	
 	private JLabel lblStatus = new JLabel("");
 	
-	public int count = 0;
+	public int count;
 	/**
 	 * Launch the application.
 	*/
@@ -81,6 +81,7 @@ public class Main {
 	 */
 	private void initialize() {
 		
+		count = 0;
 		Double i;
 		
 		MainWindow = new JFrame("TOPOLOGIES GENERATION");
@@ -216,6 +217,7 @@ public class Main {
 					
 				} else 
 				{
+					count = 0;
 					nRegionsTxtField.setEnabled(true);
 					
 					BreadthTxtField.setEnabled(false);
@@ -308,10 +310,17 @@ public class Main {
 		SimsTxtField.setColumns(10);
 		btnSimulate.setBounds(35, 273, 170, 23);
 		
+		lblStatus.setBounds(10, 257, 252, 14);
+		lblStatus.setEnabled(true);
+		MainWindow.getContentPane().add(lblStatus);
+		
 		
 		btnSimulate.addActionListener(new ActionListener() {
+			
 			public void actionPerformed(ActionEvent arg0) {
 				//simulate
+				lblStatus.setText("Simulating...");
+				lblStatus.setBounds(230, 245, 320, 80);
 				
 					if(count == 1)
 					{
@@ -321,7 +330,8 @@ public class Main {
 						/*
 						 * Verifica condições de limite para região antes de simular 
 						 */
-						if( R  > (N* N) || R < 2*N ) {
+						if( R  > (N* N) || R < 2*N )
+						{
 							
 							lblStatus.setText("Check the value of R it must be : "+2*N + " ≤ R ≤" +N*N);
 							lblStatus.setBounds(250, 280, 320, 80);
@@ -330,31 +340,29 @@ public class Main {
 						}
 						else
 						{
-							lblStatus.setText("");
-							lblStatus.setEnabled(false);
-							try 
-							{
-								simulateGraph();
-							}
-							catch(Exception e) {
-								e.printStackTrace();
-								lblStatus.setText("Couldn't generate topology!");
-								lblStatus.setBounds(250, 280, 320, 80);
-							}
+							executaComDelay();
+							
 						}
 					}
 					else
 					{
-						lblStatus.setText("");
-						lblStatus.setEnabled(false);
-						try 
+				
+//						lblStatus.setText("wtf");
+						
+						int R = Integer.parseInt( XTxtField.getText() );
+						int N =  Integer.parseInt( NodesTxtField.getText() );
+						
+						if( R  > (N * N) || R < 2*N ) 
 						{
-							simulateGraph();
-						}
-						catch(Exception e) {
-							e.printStackTrace();
-							lblStatus.setText("Couldn't generate topology!");
+							lblStatus.setText("Check the value of R it must be : "+2*N + " ≤ R ≤" +N*N);
 							lblStatus.setBounds(250, 280, 320, 80);
+							lblStatus.setToolTipText("Limit Region.");
+							return;
+						}
+						else
+						{
+//							lblStatus.setText("wth");
+							executaComDelay();
 						}
 					}
 					
@@ -362,6 +370,7 @@ public class Main {
 				
 			}
 		});
+		
 		MainWindow.getContentPane().setLayout(null);
 		MainWindow.getContentPane().add(lblNodes);
 		MainWindow.getContentPane().add(NodesTxtField);
@@ -446,10 +455,29 @@ public class Main {
 		MainWindow.getContentPane().add(BethaComboBox);
 		
 
-		lblStatus.setEnabled(false);
-		lblStatus.setBounds(10, 257, 252, 14);
-		MainWindow.getContentPane().add(lblStatus);
+		
 
+	}
+	
+	private void executaComDelay() {
+		new java.util.Timer().schedule( 
+		        new java.util.TimerTask() {
+		            @Override
+		            public void run() {
+		            	
+		            	try 
+						{
+							simulateGraph();
+						}
+						catch(Exception e) {
+							e.printStackTrace();
+							lblStatus.setText("Couldn't generate topology!");
+							lblStatus.setBounds(250, 280, 320, 80);
+						}
+		            }
+		        }, 
+		        1000
+		);
 	}
 	
 	private void simulateGraph() throws Exception{
@@ -497,8 +525,8 @@ public class Main {
 			graphGen.setDegree(false);
 		}
 		
-		lblStatus.setEnabled(true);
-		
+//		lblStatus.setText("jhgjgjghkjj.");
+//		lblStatus.setBounds(250, 250, 320, 80);
 		
 		try 
 		{
@@ -511,8 +539,8 @@ public class Main {
 		}
 		
 
-		lblStatus.setText("Simulation done!");
-		lblStatus.setBounds(250, 250, 320, 80);
+		lblStatus.setText("Done.");
+		lblStatus.setBounds(230, 245, 320, 80);
 		
 		count = 0;
 	}
