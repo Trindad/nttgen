@@ -1154,7 +1154,7 @@ public class Plane {
 								v2 = nPos.retElementTwo(dst);
 								dist = getEuclidianDistance(u1, u2, v1, v2);
 								
-								System.out.println("src "+src+" dst "+dst);
+								// System.out.println("src "+src+" dst "+dst);
 								link(rede,src,dst,mSpath,dist);
 								
 								break;
@@ -1178,7 +1178,7 @@ public class Plane {
 							
 							if(link == 0) 
 							{
-								System.out.println("src "+src+" dst "+dst);
+								// System.out.println("src "+src+" dst "+dst);
 								destinos[dst] = 1;
 								n++;
 								break;
